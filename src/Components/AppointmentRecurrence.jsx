@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
+import { Height } from "@mui/icons-material";
 
 const AppointmentRecurrence = ({}) => {
   const [isWeekly, setIsWeekly] = useState(false);
@@ -105,11 +106,8 @@ const AppointmentRecurrence = ({}) => {
   useEffect(() => {
     if (window.CustomElement) {
       try {
-        window.CustomElement.init((element) => {
-          if (element.value) {
-            setDuration(element.value);
-          }
-        });
+        CustomElement.init(callback);
+        CustomElement.setHeight(1000);
       } catch (e) {
         console.log(e);
       }
