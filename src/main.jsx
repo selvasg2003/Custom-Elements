@@ -16,7 +16,7 @@ createRoot(document.getElementById("root")).render(
       {/* <App />
        */}
       <Routes>
-        <Route path="/" element={<Dropdown countries={Countries} />} />
+        <Route path="/" element={<AppointmentRecurrence />} />
         {/* <Route path="/dropdown" element={<Dropdown countries={Countries} />} /> */}
         <Route path="/appointment" element={<AppointmentRecurrence />} />
         <Route path="/youtube" element={<YoutubeEmbed />} />
