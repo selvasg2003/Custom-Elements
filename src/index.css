@@ -66,13 +66,3 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
-/* Ensure Tailwind CSS is imported correctly */
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
