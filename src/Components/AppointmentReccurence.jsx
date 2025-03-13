@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import { Height } from "@mui/icons-material";
 
-const AppointmentRecurrence = ({}) => {
+const AppointmentReccurence = ({}) => {
   const allTimeZones = Intl.supportedValuesOf("timeZone");
   // const [allTimeZones, setAllTimeZones] = useState([]);
   const [timeZones, setTimeZones] = useState(allTimeZones[0]);
@@ -11,6 +11,8 @@ const AppointmentRecurrence = ({}) => {
   const [endTime, setEndTime] = useState("12:30 PM");
   const [duration, setDuration] = useState("30 minutes");
   const [selectedDay, setSelectedDay] = useState("");
+  const [monthlyType, setMonthlyType] = useState("");
+  const [dayOfTheWeek, setDayoftheWeek] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [isOpen, setIsOpen] = useState(true);
@@ -52,9 +54,14 @@ const AppointmentRecurrence = ({}) => {
         alert("Please select a day for weekly recurrence.");
         return;
       }
-      if (recurrenceType === "monthly" && (!selectedDate || !isValid)) {
-        alert("Please select a valid date for monthly recurrence.");
-        return;
+      if (recurrenceType === "monthly") {
+        if (monthlyType === "specificDate" && (!selectedDate || !isValid)) {
+          alert("Please select a valid date for monthly recurrence.");
+          return;
+        } else if (monthlyType === "dayOfTheWeek" && !dayOfTheWeek) {
+          alert("Please select a day for monthly recurrence.");
+          return; 
+        }
       }
       if (!startDate.trim() || !endDate.trim()) {
         alert("Recurrence start and end dates are required.");
@@ -69,10 +76,12 @@ const AppointmentRecurrence = ({}) => {
       duration,
       isRecurrence,
       recurrenceType,
-      selectedDay: isRecurrence ? selectedDay : null,
+      selectedDay: isRecurrence && recurrenceType === "weekly" ? selectedDay : null,
       recurrenceStart: isRecurrence ? startDate : null,
       recurrenceEnd: isRecurrence ? endDate : null,
-      selectedDate: isRecurrence ? selectedDate : null,
+      selectedDate: isRecurrence && recurrenceType === "monthly" && monthlyType === "specificDate" ? selectedDate : null,
+      MonthlyType: isRecurrence && recurrenceType === "monthly" ? monthlyType : null, 
+      DayoftheWeek: isRecurrence && recurrenceType === "monthly" && monthlyType === "dayOfTheWeek" ? dayOfTheWeek : null
     };
     window.CustomElement.setValue(JSON.stringify(data));
     // setEventData(data);
@@ -169,6 +178,8 @@ const AppointmentRecurrence = ({}) => {
           setSelectedDay(parsedValue.selectedDay || null);
           setEndDate(parsedValue.recurrenceEnd || "");
           setSelectedDate(parsedValue.selectedDate || null);
+          setDayoftheWeek(parsedValue.DayoftheWeek || null);
+          setMonthlyType(parsedValue.MonthlyType || null);
           // setAllTimeZones(Intl.supportedValuesOf('timeZone') || []);
         });
         const height = document.getElementById("appointment").scrollHeight;
@@ -288,14 +299,14 @@ const AppointmentRecurrence = ({}) => {
             {isRecurrence && (
               <div>
                 {/* Recurrence Type Selection */}
-                <div className="flex items-center space-x-8 mb-4">
+                <div className="flex items-center space-x-8 mb-2">
                   <label className="flex items-center space-x-2">
                     <input
                       type="radio"
                       name="recurrenceType"
                       value="weekly"
                       checked={recurrenceType === "weekly"}
-                      onChange={() => setRecurrenceType("weekly")}
+                      onChange={() => { setRecurrenceType("weekly"); setMonthlyType("")}}
                     />
                     <span className="text-lg font-semibold text-gray-800">
                       Weekly
@@ -308,7 +319,7 @@ const AppointmentRecurrence = ({}) => {
                       name="recurrenceType"
                       value="monthly"
                       checked={recurrenceType === "monthly"}
-                      onChange={() => setRecurrenceType("monthly")}
+                      onChange={() => { setRecurrenceType("monthly"); setMonthlyType("specificDate")}}
                     />
                     <span className="text-lg font-semibold text-gray-800">
                       Monthly
@@ -336,19 +347,64 @@ const AppointmentRecurrence = ({}) => {
 
                 {/* Monthly Selection */}
                 {recurrenceType === "monthly" && (
-                  <div className="mt-2">
-                    <label className="flex items-center space-x-2">
-                      <span className="text-gray-800">Select Date:</span>
-                      <input
-                        type="number"
-                        min="1"
-                        max="31"
-                        className="border border-gray-300 p-2 rounded-md w-20"
-                        value={selectedDate}
-                        onChange={handleChange}
-                      />
-                    </label>
-                    {!isValid && (
+                  <div className="">
+                    <div className="flex items-center space-x-8 mb-4">
+                      <label className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          name="specificDate"
+                          value="specificDate"
+                          checked={monthlyType === "specificDate"}
+                          onChange={() => setMonthlyType("specificDate")}
+                        />
+                        <span className="text-md font-semibold text-gray-800">
+                          Specific Date
+                        </span>
+                      </label>
+
+                      <label className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          name="dayOfTheWeek"
+                          value="dayOfTheWeek"
+                          checked={monthlyType === "dayOfTheWeek"}
+                          onChange={() => setMonthlyType("dayOfTheWeek")}
+                        />
+                        <span className="text-md font-semibold text-gray-800">
+                          Day of the Week
+                        </span>
+                      </label>
+                    </div>
+                    {monthlyType === "dayOfTheWeek" && (
+                      <div className="grid grid-cols-3 gap-2 mt-2">
+                        {daysOfWeek.map((day) => (
+                          <label key={day} className="flex items-center">
+                            <input
+                              type="radio"
+                              name="weeklySelection"
+                              className="mr-2"
+                              checked={dayOfTheWeek === day}
+                              onChange={() => setDayoftheWeek(day)}
+                            />
+                            {day}
+                          </label>
+                        ))}
+                      </div>
+                    )}
+                    {monthlyType === "specificDate" && (
+                      <label className="flex items-center">
+                        <span className="text-gray-800 mr-[10px]">Select Date:</span>
+                        <input
+                          type="number"
+                          min="1"
+                          max="31"
+                          className="border border-gray-300 py-1 px-2 rounded-md w-20"
+                          value={selectedDate}
+                          onChange={handleChange}
+                        />
+                      </label>
+                    )}
+                    {monthlyType === "specificDate" && !isValid && (
                       <span className="text-red-500 text-sm">
                         Enter a valid date (1-31).
                       </span>
@@ -400,4 +456,4 @@ const AppointmentRecurrence = ({}) => {
   );
 };
 
-export default AppointmentRecurrence;
+export default AppointmentReccurence;
