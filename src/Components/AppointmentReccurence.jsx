@@ -20,7 +20,7 @@ const AppointmentReccurence = ({}) => {
   const [recurrenceType, setRecurrenceType] = useState("weekly");
   const [selectedDate, setSelectedDate] = useState("");
   const [isValid, setIsValid] = useState(true);
-  const [WeekoftheMonth, setWeekoftheMonth] = useState("");
+  const [WeekoftheMonth, setWeekoftheMonth] = useState("First");
 
   const handleClose = () => {
     setIsOpen(false);
