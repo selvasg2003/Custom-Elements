@@ -20,6 +20,7 @@ const AppointmentReccurence = ({}) => {
   const [recurrenceType, setRecurrenceType] = useState("weekly");
   const [selectedDate, setSelectedDate] = useState("");
   const [isValid, setIsValid] = useState(true);
+  const [WeekoftheMonth, setWeekoftheMonth] = useState("");
 
   const handleClose = () => {
     setIsOpen(false);
@@ -61,6 +62,9 @@ const AppointmentReccurence = ({}) => {
         } else if (monthlyType === "dayOfTheWeek" && !dayOfTheWeek) {
           alert("Please select a day for monthly recurrence.");
           return; 
+        } else if (monthlyType === "dayOfTheWeek" && !WeekoftheMonth) {
+          alert("Please select a week for monthly recurrence.");
+          return; 
         }
       }
       if (!startDate.trim() || !endDate.trim()) {
@@ -81,7 +85,8 @@ const AppointmentReccurence = ({}) => {
       recurrenceEnd: isRecurrence ? endDate : null,
       selectedDate: isRecurrence && recurrenceType === "monthly" && monthlyType === "specificDate" ? selectedDate : null,
       MonthlyType: isRecurrence && recurrenceType === "monthly" ? monthlyType : null, 
-      DayoftheWeek: isRecurrence && recurrenceType === "monthly" && monthlyType === "dayOfTheWeek" ? dayOfTheWeek : null
+      DayoftheWeek: isRecurrence && recurrenceType === "monthly" && monthlyType === "dayOfTheWeek" ? dayOfTheWeek : null,
+      WeekoftheMonth: isRecurrence && recurrenceType === "monthly" && monthlyType === "dayOfTheWeek" ? WeekoftheMonth : null,
     };
     window.CustomElement.setValue(JSON.stringify(data));
     // setEventData(data);
@@ -99,6 +104,8 @@ const AppointmentReccurence = ({}) => {
     "Friday",
     "Saturday",
   ];
+
+  const weeklyOptions = [ "First", "Second", "Third", "Fourth", "Last" ];
 
   const toggleDaySelection = (day) => {
     setSelectedDays((prev) =>
@@ -180,6 +187,7 @@ const AppointmentReccurence = ({}) => {
           setSelectedDate(parsedValue.selectedDate || null);
           setDayoftheWeek(parsedValue.DayoftheWeek || null);
           setMonthlyType(parsedValue.MonthlyType || null);
+          setWeekoftheMonth(parsedValue.WeekoftheMonth || null);
           // setAllTimeZones(Intl.supportedValuesOf('timeZone') || []);
         });
         const height = document.getElementById("appointment").scrollHeight;
@@ -376,19 +384,35 @@ const AppointmentReccurence = ({}) => {
                       </label>
                     </div>
                     {monthlyType === "dayOfTheWeek" && (
-                      <div className="grid grid-cols-3 gap-2 mt-2">
-                        {daysOfWeek.map((day) => (
-                          <label key={day} className="flex items-center">
-                            <input
-                              type="radio"
-                              name="weeklySelection"
-                              className="mr-2"
-                              checked={dayOfTheWeek === day}
-                              onChange={() => setDayoftheWeek(day)}
-                            />
-                            {day}
-                          </label>
-                        ))}
+                      <div>
+                        <div className="flex items-center space-x-4 mb-4">
+                          <label className="text-gray-700 font-medium">Select a week:</label>
+                          <select
+                            className="p-2 border rounded-md text-gray-700 w-[150px]"
+                            value={WeekoftheMonth}
+                            onChange={(e) => setWeekoftheMonth(e.target.value)}
+                          >
+                            {weeklyOptions.map((week) => (
+                              <option key={week} value={week}>
+                                {week}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="grid grid-cols-3 gap-2 mt-2">
+                          {daysOfWeek.map((day) => (
+                            <label key={day} className="flex items-center">
+                              <input
+                                type="radio"
+                                name="weeklySelection"
+                                className="mr-2"
+                                checked={dayOfTheWeek === day}
+                                onChange={() => setDayoftheWeek(day)}
+                              />
+                              {day}
+                            </label>
+                          ))}
+                        </div>
                       </div>
                     )}
                     {monthlyType === "specificDate" && (
