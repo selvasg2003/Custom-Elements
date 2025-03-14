@@ -30,6 +30,7 @@ const AppointmentReccurence = ({}) => {
       alert("Date is required.");
       return;
     }
+
     if (!timeZones.trim()) {
       alert("Time zone is required.");
       return;
